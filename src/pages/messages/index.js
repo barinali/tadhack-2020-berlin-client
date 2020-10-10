@@ -11,22 +11,24 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Fab from '@material-ui/core/Fab';
 import SendIcon from '@material-ui/icons/Send';
+import { blue } from '@material-ui/core/colors';
 import {
   Link as RouterLink
 } from "react-router-dom";
 
 import api from '../../helpers/api';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   table: {
     minWidth: 650,
   },
   chatSection: {
-    width: '100%',
-    height: '100vh'
+    flexGrow: 1,
+    height: '100%',
   },
   headBG: {
     backgroundColor: '#e0e0e0'
@@ -35,17 +37,32 @@ const useStyles = makeStyles({
     borderRight: '1px solid #e0e0e0'
   },
   messageArea: {
-    height: '83vh',
+    height: '84vh',
     overflowY: 'auto'
+  },
+  blue: {
+    color: theme.palette.getContrastText(blue[500]),
+    backgroundColor: blue[500],
+    fontSize: '1rem'
   }
-});
+}));
+
+const takeInitials = (name) => {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase();
+};
+
+const isSenderStudent = (message) => {
+  return message.sender.type === 'Student';
+}
 
 const Messages = ({ match }) => {
   const { studentId = undefined } = match.params;
   const classes = useStyles();
   const [students, setStudents] = React.useState([]);
   const [messages, setMessages] = React.useState([]);
- 
+  const [message, setMessage] = React.useState('');
+  const bottomRef = React.useRef(null);
+
   const fetchAndSetStudents = async () => {
     const { data } = await api.fetchStudents();
 
@@ -56,14 +73,29 @@ const Messages = ({ match }) => {
     const { data } = await api.fetchMessages();
 
     setMessages(data);
+
+    // bottomRef.current.scrollIntoViewIfNeeded();
   };
+
+  const shortPooler = () => {
+    return setInterval(fetchAndSetMessages, 5000);
+  }
 
   React.useEffect(() => {
     fetchAndSetStudents();
     fetchAndSetMessages();
+    const intervalId = shortPooler();
+
+    return () => {
+      clearInterval(intervalId);
+    }
   }, []);
 
   const messagesToDisplay = messages.filter((message) => {
+    if (studentId === undefined) {
+      return message;
+    }
+
     if (message.sender_type === 'Student' && message.sender_id === studentId) {
       return message;
     } else if (message.sender_type === 'Teacher') {
@@ -71,21 +103,37 @@ const Messages = ({ match }) => {
     }
   });
 
+  const sendMessage = async () => {
+    const payload = {
+      content: message,
+      receiver_id: students[0].id,
+      receiver_type: 'Student',
+      sender_id: 1,
+      sender_type: 'Teacher',
+    };
+    setMessage('');
+
+    await api.sendMessage(payload);
+    await fetchAndSetMessages();
+  }
+
+  const keyDownHandler = async (event) => {
+    console.log(event);
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  }
+
   return (
     <div>
-      {/* <Grid container>
-        <Grid item xs={12} >
-          <Typography variant="h5" className="header-message">Chat</Typography>
-        </Grid>
-      </Grid> */}
       <Grid container component={Paper} className={classes.chatSection}>
         <Grid item xs={3} className={classes.borderRight500}>
           <List>
             <Link component={RouterLink} to="/students" color="textPrimary">
-              <ListItem button key="TheTecher">
-                <ListItemIcon>
-                  <Avatar alt="The teacher" src="http://placehold.it/128x128/00adef/ffffff?text=TT" />
-                </ListItemIcon>
+              <ListItem button key="TheTeacher">
+                <ListItemAvatar>
+                  <Avatar className={classes.blue} alt="The teacher">TT</Avatar>
+                </ListItemAvatar>
                 <ListItemText primary="The teacher"></ListItemText>
               </ListItem>
             </Link>
@@ -97,66 +145,51 @@ const Messages = ({ match }) => {
           <Divider />
           <List>
             {students.map((student) => (
-              <Link component={RouterLink} to={`/students/${student.id}`} color="textPrimary">
+              <Link key={student.id} component={RouterLink} to={`/students/${student.id}`} color="textPrimary">
                 <ListItem button key={student.id}>
-                  <ListItemIcon>
-                    <Avatar alt={student.name} src={`http://placehold.it/128x128/00adef/ffffff?text=${student.name.split(' ').map(w => w[0]).join('').toUpperCase()}`} />
-                  </ListItemIcon>
+                  <ListItemAvatar>
+                    <Avatar className={classes.blue} alt={student.name}>{takeInitials(student.name)}</Avatar>
+                  </ListItemAvatar>
                   <ListItemText primary={student.name}>{student.name}</ListItemText>
                 </ListItem>
               </Link>
             ))}
           </List>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={9} style={{height: '100%'}}>
           <List className={classes.messageArea}>
             {messagesToDisplay.map((message) => (
-              <ListItem key={message.id}>
-                <Grid container>
-                  <Grid item xs={2}>
-                    {/* <Avatar alt={message.sender.name} src={`http://placehold.it/128x128/00adef/ffffff?text=${message.sender.name.split(' ').map(w => w[0]).join('').toUpperCase()}`} /> */}
-                  </Grid>
-                  <Grid item xs={12}>
-                    <div>
-                      <ListItemText align={message.sender_type === 'Student' ? 'left' : 'right'} primary={message.content}></ListItemText>
-                    </div>
-                  {/* </Grid>
-                  <Grid item xs={12}> */}
-                    <div>
-                      <ListItemText align={message.sender_type === 'Student' ? 'left' : 'right'} secondary={formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}></ListItemText>
-                    </div>
-                  </Grid>
-                </Grid>
+              <ListItem key={message.id} style={{flexDirection: isSenderStudent(message) ? 'row': 'row-reverse'}}>
+                <ListItemAvatar align={isSenderStudent(message) ? 'left' : 'right'}>
+                  <Avatar className={classes.blue} alt={message.sender.name}>{takeInitials(message.sender.name)}</Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  align={isSenderStudent(message) ? 'left' : 'right'}
+                  primary={message.content}
+                  secondary={formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+                />
               </ListItem>
             ))}
-            {/* <ListItem key="2">
-              <Grid container>
-                <Grid item xs={12}>
-                  <ListItemText align="left" primary="Hey, Iam Good! What about you ?"></ListItemText>
-                </Grid>
-                <Grid item xs={12}>
-                  <ListItemText align="left" secondary="09:31"></ListItemText>
-                </Grid>
-              </Grid>
-            </ListItem>
-            <ListItem key="3">
-              <Grid container>
-                <Grid item xs={12}>
-                  <ListItemText align="right" primary="Cool. i am good, let's catch up!"></ListItemText>
-                </Grid>
-                <Grid item xs={12}>
-                  <ListItemText align="right" secondary="10:30"></ListItemText>
-                </Grid>
-              </Grid>
-            </ListItem> */}
+            <div ref={bottomRef} />
           </List>
           <Divider />
           <Grid container style={{ padding: '20px' }}>
             <Grid item xs={11}>
-              <TextField id="outlined-basic-email" label="Type Something" fullWidth />
+              <TextField
+                id="outlined-basic-email"
+                label="Type Something"
+                onKeyDown={keyDownHandler}
+                fullWidth
+                value={message}
+                onChange={(event) => {
+                  const value = event.target.value;
+
+                  setMessage(value);
+                }}
+              />
             </Grid>
             <Grid item xs={1} align="right">
-              <Fab color="primary" aria-label="add"><SendIcon /></Fab>
+              <Fab color="primary" aria-label="add" onClick={sendMessage}><SendIcon /></Fab>
             </Grid>
           </Grid>
         </Grid>

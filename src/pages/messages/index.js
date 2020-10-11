@@ -156,12 +156,13 @@ const Messages = ({ match }) => {
     }
   }
 
-  const initiateCall = (studentId) => {
+  const initiateCall = (studentPhoneNumber) => {
     return async (event) => {
       event.preventDefault();
 
       const payload = {
-
+        from: teacher.phone_number,
+        to: studentPhoneNumber,
       };
       await api.initiateCall(payload);
 
@@ -236,7 +237,7 @@ const Messages = ({ match }) => {
                   <ListItemText primary={student.name}>{student.name}</ListItemText>
 
                   <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="initiateCall" onClick={initiateCall(student.id)}>
+                    <IconButton edge="end" aria-label="initiateCall" onClick={initiateCall(student.phone_number)}>
                       <CallIcon />
                     </IconButton>
                   </ListItemSecondaryAction>

@@ -144,7 +144,7 @@ export default function Dashboard() {
               <MenuIcon />
             </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Classroom communication tool
+              Student-Teacher Notification Application (STeNa)
             </Typography>
           </Toolbar>
         </AppBar>

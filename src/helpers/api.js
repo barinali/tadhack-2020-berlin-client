@@ -31,6 +31,12 @@ const api = {
   fetchMessages: () => {
     return api.instance.get('/messages');
   },
+  initiateCall: (payload) => {
+    return api.instance.post('/calls', payload);
+  },
+  fetchTeachers: () => {
+    return api.instance.get('/teachers');
+  },
 };
 
 export default api;

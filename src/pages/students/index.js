@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: '1rem',
   },
   form: {
+    width: '100%',
     backgroundColor: theme.palette.background.paper,
     '& > *': {
       margin: theme.spacing(1),
@@ -80,10 +81,11 @@ export default function StudentList() {
   return (
     <>
       <Container maxWidth="lg" className={classes.container}>
-        <Typography variant="h4" gutterBottom={true}>Students</Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={12} lg={12}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h4" gutterBottom={true}>Students</Typography>
+
             <List className={classes.root}>
               {students.map((student) => {
                 return (
@@ -102,51 +104,41 @@ export default function StudentList() {
                 );
               })}
             </List>
-          </Grid>
 
-          <Grid item xs={12}>
             <Button variant="contained" color="primary" onClick={deleteStudents}>
               Delete selected students
             </Button>
           </Grid>
-        </Grid>
-      </Container>
 
-      <Container maxWidth="lg" className={classes.container}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Typography variant="h4" gutterBottom={true}>Add a student</Typography>
 
             <form className={classes.form} noValidate autoComplete="off">
-              <div>
-                <TextField
-                  id="standard-basic"
-                  label="Student name"
-                  onChange={(event) => {
-                    const value = event.target.value;
+              <TextField
+                id="standard-basic"
+                label="Student name"
+                fullWidth
+                onChange={(event) => {
+                  const value = event.target.value;
 
-                    setStudentName(value);
-                  }}
-                />
-              </div>
+                  setStudentName(value);
+                }}
+              />
 
-              <div>
-                <TextField
-                  id="standard-basic"
-                  label="Phone number"
-                  onChange={(event) => {
-                    const value = event.target.value;
+              <TextField
+                id="standard-basic"
+                label="Phone number"
+                fullWidth
+                onChange={(event) => {
+                  const value = event.target.value;
 
-                    setStudentPhoneNumber(value);
-                  }}
-                />
-              </div>
+                  setStudentPhoneNumber(value);
+                }}
+              />
 
-              <div>
-                <Button variant="contained" color="primary" onClick={addStudent}>
-                  Add
-                </Button>
-              </div>
+              <Button variant="contained" color="primary" onClick={addStudent}>
+                Add
+              </Button>
             </form>
           </Grid>
         </Grid>

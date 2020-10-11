@@ -32,7 +32,7 @@ const api = {
     return api.instance.get('/messages');
   },
   initiateCall: (payload) => {
-    return api.instance.post('/calls', payload);
+    return api.instance.post('/students/trigger', payload);
   },
   fetchTeachers: () => {
     return api.instance.get('/teachers');

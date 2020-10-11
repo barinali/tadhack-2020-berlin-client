@@ -146,6 +146,8 @@ const Messages = ({ match }) => {
 
     await api.sendMessage(payload);
     await fetchAndSetMessages();
+
+    bottomRef.current.scrollIntoViewIfNeeded();
   }
 
   const keyDownHandler = async (event) => {

@@ -97,12 +97,7 @@ export default function StudentList() {
                         inputProps={{ 'aria-labelledby': student.id }}
                       />
                     </ListItemIcon>
-                    <ListItemText id={student.id} primary={student.name} />
-                    <ListItemSecondaryAction>
-                      {/* <IconButton edge="end" aria-label="comments">
-                        <CommentIcon />
-                      </IconButton> */}
-                    </ListItemSecondaryAction>
+                    <ListItemText id={student.id} primary={student.name} secondary={student.phone_number} />
                   </ListItem>
                 );
               })}

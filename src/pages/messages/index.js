@@ -84,6 +84,9 @@ const Messages = ({ match }) => {
   React.useEffect(() => {
     fetchAndSetStudents();
     fetchAndSetMessages();
+
+    bottomRef.current.scrollIntoViewIfNeeded();
+
     const intervalId = shortPooler();
 
     return () => {
@@ -96,9 +99,10 @@ const Messages = ({ match }) => {
       return message;
     }
 
-    if (message.sender_type === 'Student' && message.sender_id === studentId) {
+    // debugger;
+    if (message.sender.type === 'Student' && message.sender.id == studentId) {
       return message;
-    } else if (message.sender_type === 'Teacher') {
+    } else if (message.sender.type === 'Teacher') {
       return message;
     }
   });
@@ -129,7 +133,7 @@ const Messages = ({ match }) => {
       <Grid container component={Paper} className={classes.chatSection}>
         <Grid item xs={3} className={classes.borderRight500}>
           <List>
-            <Link component={RouterLink} to="/students" color="textPrimary">
+            <Link component={RouterLink} to="/" color="textPrimary">
               <ListItem button key="TheTeacher">
                 <ListItemAvatar>
                   <Avatar className={classes.blue} alt="The teacher">TT</Avatar>
@@ -145,7 +149,7 @@ const Messages = ({ match }) => {
           <Divider />
           <List>
             {students.map((student) => (
-              <Link key={student.id} component={RouterLink} to={`/students/${student.id}`} color="textPrimary">
+              <Link key={student.id} component={RouterLink} to={`/${student.id}`} color="textPrimary">
                 <ListItem button key={student.id}>
                   <ListItemAvatar>
                     <Avatar className={classes.blue} alt={student.name}>{takeInitials(student.name)}</Avatar>

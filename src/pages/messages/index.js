@@ -164,6 +164,8 @@ const Messages = ({ match }) => {
 
       };
       await api.initiateCall(payload);
+
+      alert('A call is about to be initiated between the student and the teacher.')
     }
   };
 

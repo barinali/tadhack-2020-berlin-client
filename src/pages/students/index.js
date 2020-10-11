@@ -23,12 +23,14 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     backgroundColor: theme.palette.background.paper,
+    marginBottom: theme.spacing(2),
   },
   container: {
     paddingTop: '1rem',
   },
   form: {
     width: '100%',
+    marginBottom: theme.spacing(2),
     backgroundColor: theme.palette.background.paper,
     '& > *': {
       margin: theme.spacing(1),
@@ -135,11 +137,11 @@ export default function StudentList() {
                   setStudentPhoneNumber(value);
                 }}
               />
-
-              <Button variant="contained" color="primary" onClick={addStudent}>
-                Add
-              </Button>
             </form>
+
+            <Button variant="contained" color="primary" onClick={addStudent}>
+              Add
+            </Button>
           </Grid>
         </Grid>
       </Container>

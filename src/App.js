@@ -24,19 +24,6 @@ import {
   Link as RouterLink
 } from "react-router-dom";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link component={RouterLink} color="inherit" href="https://automat.berlin/">
-        Tadhack Berlin 2020 - Automat Berlin GmbH
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({

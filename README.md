@@ -1,3 +1,3 @@
-# tadhack-2020-berlin-client
+## TADHack 2020 - sTeNa project
 
-The application resides in the https://github.com/barinali/tadhack-2020-berlin-client/tree/changes branch for the time being. It'll be moved to the `main` branch later on.
+This repository contains the client-side of the sTeNa project. For further information, one may refer [check this out](https://github.com/automat-berlin/tadhack-2020-berlin).
